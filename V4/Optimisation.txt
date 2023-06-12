@@ -1,0 +1,1 @@
+Do not dynamically load packages when commands are called, this will slow down execution time every time the command is called by the program -> worse UX
