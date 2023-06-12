@@ -1,0 +1,35 @@
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  
+IMPLEMENT A "REMIND ME" FEATURE
+//---------------------------------------------------
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    if (msg.content.startsWith('!role') && isAuth) {
+      const member = msg.mentions.members.first();
+      const args = msg.content.split(' ').splice(1);
+      const { guild } = msg
+      roleName = ''
+
+     /*  for (let i = 0; i < args.length-1; i++) {
+        roleName = roleName + args[i] + ' ';
+        console.log(roleName)
+      } */
+
+      console.log('2nd ' + roleName)
+
+      if (!member) return msg.reply('Please specify a member!')
+      if (!roleName) return msg.reply('Please specify a role!')
+
+      const role = guild.roles.cache.find((role) => {
+        return role.name === roleName
+      })
+      if (!role) {
+        msg.reply(`There is no role with the name "${roleName}"`)
+        return
+      }
+
+      console.log('made it this far');
+
+    }
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------             

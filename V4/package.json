@@ -1,0 +1,23 @@
+{
+  "name": "rouge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "cheerio": "^1.0.0-rc.10",
+    "discord.js": "^13.3.1",
+    "dotenv": "^10.0.0",
+    "images-scraper": "^6.4.0",
+    "node-fetch": "^3.2.8",
+    "puppeteer": "^13.0.0",
+    "request": "^2.88.2",
+    "timers": "^0.1.1"
+  }
+}
