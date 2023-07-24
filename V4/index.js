@@ -2,8 +2,10 @@ const path = require("node:path");
 const fs = require('node:fs');
 const { Client, Collection, Events, GatewayIntentBits, messageLink } = require('discord.js');
 const { token } = require("../config.json");
-const { maxHeaderSize } = require("node:http");
-const { builtinModules } = require("node:module");
+//const { maxHeaderSize } = require("node:http");
+//const { builtinModules } = require("node:module");
+const cheerio = require('cheerio');
+const axios = require('axios');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 
@@ -14,7 +16,14 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('
 for (const file of commandFiles) {
 	const filePath = path.join(commandsPath, file);
 	const command = require(filePath);
-	client.commands.set(command.name, command);
+
+    // Pass cheerio and axios as dependencies to the "pinterest" command module
+    if (command.name === 'pinterest') {
+		command.cheerio = cheerio;
+		command.axios = axios;
+	}
+
+    client.commands.set(command.name, command);
 }
 
 client.once(Events.ClientReady, () => {

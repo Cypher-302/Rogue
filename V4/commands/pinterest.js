@@ -1,11 +1,11 @@
-const cheerio = require('cheerio');
-const axios = require('axios');
-
 module.exports = {
     name: "pinterest",
     description: "Provides an embedded image of an pinterest link",
     execute(msg) {
         try{
+            const cheerio = this.cheerio; // Access the cheerio dependency
+            const axios = this.axios; // Access the axios dependency
+            
             console.log(`[PINTEREST]: {${msg.author.username}}`);
             var url = msg.content.match(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/)[0];
 
