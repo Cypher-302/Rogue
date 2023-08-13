@@ -22,13 +22,13 @@ for (const file of commandFiles) {
 		command.cheerio = cheerio;
 		command.axios = axios;
 	}
-
+    
     client.commands.set(command.name, command);
 }
 
 client.once(Events.ClientReady, () => {
     console.log("Ready!");
-    client.channels.cache.find(channel => channel.id === '934893639405043756').send(`Bot is online! [RUNNING ON: Cypher's PC]`)
+   //client.channels.cache.find(channel => channel.id === '934893639405043756').send(`Bot is online! [RUNNING ON: Cypher's PC]`)
 });
 
 client.on(Events.MessageCreate, msgHandler);
@@ -48,13 +48,18 @@ async function msgHandler(msg) {
     }
 
     /*  if (msg.content.includes("tiktok.com/")) {
-        msgCommand = "tiktok";
+        msgCommand = "tiktok";result.url
     }  */
 
     if (msg.content.startsWith("!")) {
         msgCommand = msg.content.split(" ").shift();    
         msgCommand = msgCommand.substring(1);
-    }    
+    }
+    
+    if (msg.content.includes('!img')) {
+        msgCommand = 'img';
+    } 
+    
     const command = client.commands.get(msgCommand);
 
 	if (!command) return;

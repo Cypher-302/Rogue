@@ -1,5 +1,4 @@
-var Scraper = require('images-scraper');
-const { truncate } = require('fs/promises');
+var Scraper = require('images-scraper');    
 
 const google = new Scraper({
   puppeteer: {
@@ -7,12 +6,16 @@ const google = new Scraper({
   },
 });
 
+//const { client } = require("../index.js");
+const { EmbedBuilder } = require('discord.js');
+
 module.exports = {
     name: "img",
-    description: "Replies with an image depending on user request",
+    description: "Replies with image(s) depending on user request.\n Format: !img[number] input here \n Example: !img3 discord logo \n Example 2: !img party",
     execute(msg) {
 
-        (async () => {     
+        (async () => {   
+              
             let args = msg.content.split(" ");
             const userInput = args.splice(1).join(" ");
 
@@ -20,14 +23,22 @@ module.exports = {
             if (!amt){
                 amt = 1
             }
-            console.log(`${msg.author.username} requested ${amt} images of: ${userInput}`)
+            console.log(`[IMAGE REQUEST] (${amt}) {${msg.author.username}} : ${userInput}`)
                     
             var results = await google.scrape(userInput, amt);
                 
             var arrResults = Object.values(results)
 
-            arrResults.forEach(result =>{
-                msg.reply(`<${result.source}> ${result.url}`)
+            arrResults.forEach((result,index) =>{
+                const commandsEmbed = new EmbedBuilder()
+	            .setColor(0x344c65)
+	            .setTitle(`${userInput} (${index+1})`)
+                .setImage(result.url) 
+	            .setTimestamp()
+                //commandsEmbed.addFields({ name: userInput+' ('+(index+1)+')', value: '<'+result.source+'>'});
+                .setURL(result.source);
+                msg.reply({ embeds: [commandsEmbed] });
+                //msg.reply(`<${result.source}> ${result.url}`)
             }) 
     
             if (results.length == 0) {
