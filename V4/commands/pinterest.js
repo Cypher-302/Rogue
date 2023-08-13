@@ -1,6 +1,6 @@
 module.exports = {
     name: "pinterest",
-    description: "Provides an embedded image of an pinterest link",
+    description: "Provides an embedded image of an pinterest link. Triggers automatically.",
     execute(msg) {
         try{
             const cheerio = this.cheerio; // Access the cheerio dependency

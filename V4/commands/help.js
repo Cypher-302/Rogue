@@ -15,7 +15,7 @@ module.exports = {
 
             const commandsEmbed = new EmbedBuilder()
 	        .setColor(0x0099FF)
-	        .setTitle('Rouge Commands')
+	        .setTitle(`Rogue's Commands`)
             //.addFields({ name: client.commands[1].name, value: client.commands[1].description})
 	        /* .setURL('https://discord.js.org/')
 	        .setAuthor({ name: 'Some name', iconURL: 'https://i.imgur.com/AfFp7pu.png', url: 'https://discord.js.org' })

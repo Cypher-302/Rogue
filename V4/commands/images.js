@@ -1,13 +1,11 @@
-var Scraper = require('images-scraper');    
-
+var Scraper = require('images-scraper');
 const google = new Scraper({
-  puppeteer: {
-    headless: true,
-  },
+    puppeteer: {
+      headless: true,
+    },
 });
+const { EmbedBuilder } = require('discord.js');; 
 
-//const { client } = require("../index.js");
-const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: "img",
@@ -15,7 +13,7 @@ module.exports = {
     execute(msg) {
 
         (async () => {   
-              
+ 
             let args = msg.content.split(" ");
             const userInput = args.splice(1).join(" ");
 
@@ -23,7 +21,7 @@ module.exports = {
             if (!amt){
                 amt = 1
             }
-            console.log(`[IMAGE REQUEST] (${amt}) {${msg.author.username}} : ${userInput}`)
+            console.log(`[IMAGE REQUEST] {${msg.author.username}} (${amt}) : ${userInput}`)
                     
             var results = await google.scrape(userInput, amt);
                 
@@ -38,7 +36,6 @@ module.exports = {
                 //commandsEmbed.addFields({ name: userInput+' ('+(index+1)+')', value: '<'+result.source+'>'});
                 .setURL(result.source);
                 msg.reply({ embeds: [commandsEmbed] });
-                //msg.reply(`<${result.source}> ${result.url}`)
             }) 
     
             if (results.length == 0) {
