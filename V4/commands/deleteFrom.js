@@ -2,7 +2,7 @@ const startingCounter = 5;
 let counter = startingCounter;
 let deleteAmt = 0;
 
-const updateCounter = (msg) => {
+const updateCounter = async (msg) => {
     counter -= 1; //subtracts 1 from counter
 
     if (deleteAmt == 0) {
@@ -13,8 +13,13 @@ const updateCounter = (msg) => {
 
     if (counter <= 0) {
         if (deleteAmt > 0) {
-            msg.channel.bulkDelete(deleteAmt);  
-            return;
+                try{
+                    await msg.channel.bulkDelete(deleteAmt);  
+                } catch(error) {
+                    msg.edit(`Deletion failed!\nPS: Messages older than 14 days cannot be bulk deleted.`);
+                    console.log(`[DELETE FROM] ERROR - Messages > 14 days`)
+                }
+                return;
         } else {
             counter = startingCounter;
         }
@@ -45,7 +50,6 @@ module.exports = {
 
             await msg.channel.messages.fetch({limit: 100}).then(messages => {
                 const repliedMessage = messages.get(repliedMessageId);
-                
 
                 const messagesAfterReplied = messages.filter(message => message.createdTimestamp >= repliedMessage.createdTimestamp);
                 deleteAmt = messagesAfterReplied.size;

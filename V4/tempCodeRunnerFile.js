@@ -1,1 +1,1 @@
-		console.log(`Error: ! found, invalid command. \n ${msg.author.username}: ${msg.content} \n ^ ${msg.guild.name} -> ${msg.channel.name} ^ \n ${msg.url}`);
+sh
