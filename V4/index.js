@@ -36,7 +36,7 @@ for (const file of commandFiles) {
 
 client.once(Events.ClientReady, () => {
     console.log("Ready!");
-    //client.channels.cache.find(channel => channel.id === '950067867808858114').send(`Bot is online! [RUNNING ON: Cypher's PC]`) //random-stuff
+    client.channels.cache.find(channel => channel.id === '950067867808858114').send(`Bot is online! [RUNNING ON: Cypher's PC]`) //random-stuff
 });
 
 
