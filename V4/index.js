@@ -21,7 +21,7 @@ for (const file of commandFiles) {
     // Pass cheerio and axios as dependencies to the "pinterest" command module
     switch (command.name) {
         case 'pinterest':
-            command.cheerio = cheerio;
+            //command.cheerio = cheerio;
             command.axios = axios;
             break;
         case 'images':
@@ -36,7 +36,7 @@ for (const file of commandFiles) {
 
 client.once(Events.ClientReady, () => {
     console.log("Ready!");
-    client.channels.cache.find(channel => channel.id === '950067867808858114').send(`Bot is online! [RUNNING ON: Cypher's PC]`) //random-stuff
+    //client.channels.cache.find(channel => channel.id === '950067867808858114').send(`Bot is online! [RUNNING ON: Cypher's PC]`) //random-stuff
 });
 
 
@@ -47,7 +47,7 @@ async function msgHandler(msg) { //switch case statement better than many if sta
     var msgCommand;
 
 
-    if (msg.content.includes('https://pin.it/')) {
+    if (msg.content.includes('https://pin.it/') || msg.content.includes('pinterest.com/pin/')) {
         msgCommand = "pinterest";
     } else if (msg.content.includes('instagram.com/reel/')) {
         //---
