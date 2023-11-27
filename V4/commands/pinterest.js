@@ -15,33 +15,38 @@ module.exports = {
             (async () => {
 
                 let id = await getPinterestId(inputUrl)
-                
+
 
                 let data = await getPinResource(id)
 
-                var { title, link, dominant_color, story_pin_data, images, created_at } = data // renaming- images: arrImages
+                var { title, link: web_link, dominant_color, story_pin_data, images, created_at } = data;
+                var author_name = data.native_creator?.full_name;
+                var author_icon = data.native_creator?.image_medium_url;
                 var arrVideos = [];
                 var arrImages = [];
-                //console.log(story_pin_data.pages, story_pin_data.pages[0])
+                //story_pin_data.pages.forEach(element => {
+                //    console.log(element);
+                //});
+
                 if (story_pin_data) {
-                    for (const block of story_pin_data.pages[0].blocks) {
-                        if (block.video) {
-                            arrVideos.push(Object.values(block?.video?.video_list)[0]?.url)
-                        } else if (block.image) {
-                            arrImages.push(block?.image?.images?.originals?.url)
-                        }
-                        //console.log(block)
-                    }
-                }
-                //console.log('appear!')
+                    story_pin_data.pages.forEach(page => {
+                        for (const block of page.blocks) {
+                            if (block.video) {
+                                arrVideos.push(Object.values(block?.video?.video_list)[0]?.url)
+                            } else if (block.image) {
+                                arrImages.push(block?.image?.images?.originals?.url)
+                            }
+                        };
+                    });
+                };
+
                 console.log(arrVideos, arrImages)
 
                 //var storyImages = story_pin_data?.pages?.map?.(e => e.blocks[0]?.image?.images?.originals?.url) || [images.orig.url] || []
-                var web_link = link;
 
-                var author_name = data.native_creator?.full_name;
-                var author_icon = data.native_creator?.image_medium_url;
+
                 //console.log(story_pin_data?.pages?.map?.(e => e.blocks))
+
                 if (images.orig.url) {
                     arrImages.push(images.orig.url)
                 }
@@ -56,6 +61,7 @@ module.exports = {
                 if (arrVideos.length > 0) {
                     is_video = true
                 }
+
                 var currentdate = new Date();
                 var formattedDate = '';
                 switch (msg.createdAt.getDate()) {
@@ -68,37 +74,31 @@ module.exports = {
                     default:
                         formattedDate = currentdate.toDateString() + ' at ';
                 }
-                console.log(currentdate.getDate(), msg.createdAt.getDate(), msg.createdAt.getDate() - 1)
+                
                 var outputDate = formattedDate + msg.createdAt.toTimeString();
-                //console.log(outputDate)
-                const commandsEmbed = new EmbedBuilder()
+
+                const pinterestEmbed = new EmbedBuilder()
                     .setColor(dominant_color || 0x0099FF)
                     .setTitle(title || 'Pinterest')
-                    .setURL(web_link)
+                    .setURL(inputUrl)
                     .setAuthor({ name: msg.author.username, iconURL: msg.author.displayAvatarURL() }) //, url: 'https://discord.js.org' 
-                    .setDescription(outputDate.replace(/( GMT\+[0-9]+ )+/, ' '))                    //---add option to remove all GMT info when doing / commands
-                    //.setThumbnail('https://i.imgur.com/AfFp7pu.png') // use image if video present
-                    /* .addFields(
-                        
-                        { name: 'Regular field title', value: 'Some value here' },
-                        { name: '\u200B', value: '\u200B' },
-                        { name: 'Inline field title', value: 'Some value here', inline: true },
-                        { name: 'Inline field title', value: 'Some value here', inline: true },
+                    .setDescription(outputDate.replace(/( GMT\+[0-9]+ )+/, ' '))
+                    /*.setThumbnail('https://i.imgur.com/AfFp7pu.png') // use image if video present
+                    .addFields({ name: '\u200B', value: '\u200B' })
                     )*/
-                    //.addFields({ name: 'Inline field title', value: video }) 
-
                     .setTimestamp(new Date(created_at) ?? new Date(now)) // post publish date
-                    .setFooter({ text: author_name ?? 'Unnamed Author', iconURL: author_icon }); //post author? should that be under setAuthor?
-                if (arrImages.length > 0) {
-                     /* if (arrImages.length > 1) {
-                        commandsEmbed.setImage(shift(arrImages));
-                        arrImages.forEach(image_url => {
-                            msg.channel.send(image_url);
-                        });
-                    } else  */commandsEmbed.setImage(arrImages.join("\n")) //cant embed videos  (video ?? )
+                    .setFooter({ text: author_name ?? 'Unnamed Author', iconURL: author_icon }); //pinterest post author? should that be under setAuthor?
+                if (web_link) {
+                    pinterestEmbed.addFields({ name: 'Website link', value: `[Guide](${web_link})`, inline: true })
                 }
-                msg.delete();
-                msg.channel.send({ embeds: [commandsEmbed] }); //await waitMsg.edit
+                if (arrImages.length > 0) {
+                      /* if (arrImages.length > 1) {
+                        pinterestEmbed.setImage(arrImages.shift());
+                        msg.channel.send(arrImages.join(' '));
+                    } else  */pinterestEmbed.setImage(arrImages[0]) //cant embed videos  (video ?? )
+                }
+                //msg.delete();
+                msg.channel.send({ embeds: [pinterestEmbed] }); //await waitMsg.edit
                 if (is_video) {
                     arrVideos.forEach(video_url => {
                         msg.channel.send(`[720p Video](${video_url})`); //-------------------------grab thumbnail for videos without images, so the embed doesn't look weird
