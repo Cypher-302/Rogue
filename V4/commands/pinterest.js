@@ -56,14 +56,27 @@ module.exports = {
                 if (arrVideos.length > 0) {
                     is_video = true
                 }
-                
-
+                var currentdate = new Date();
+                var formattedDate = '';
+                switch (msg.createdAt.getDate()) {
+                    case currentdate.getDate():
+                        formattedDate = 'Today at ';
+                        break;
+                    case (currentdate.getDate() - 1):
+                        formattedDate = 'Yesterday at ';
+                        break;
+                    default:
+                        formattedDate = currentdate.toDateString() + ' at ';
+                }
+                console.log(currentdate.getDate(), msg.createdAt.getDate(), msg.createdAt.getDate() - 1)
+                var outputDate = formattedDate + msg.createdAt.toTimeString();
+                //console.log(outputDate)
                 const commandsEmbed = new EmbedBuilder()
                     .setColor(dominant_color || 0x0099FF)
                     .setTitle(title || 'Pinterest')
                     .setURL(web_link)
                     .setAuthor({ name: msg.author.username, iconURL: msg.author.displayAvatarURL() }) //, url: 'https://discord.js.org' 
-                    //.setDescription('Some description here')
+                    .setDescription(outputDate.replace(/( GMT\+[0-9]+ )+/, ' '))                    //---add option to remove all GMT info when doing / commands
                     //.setThumbnail('https://i.imgur.com/AfFp7pu.png') // use image if video present
                     /* .addFields(
                         
@@ -74,7 +87,7 @@ module.exports = {
                     )*/
                     //.addFields({ name: 'Inline field title', value: video }) 
 
-                    .setTimestamp(new Date(created_at)) // post publish date
+                    .setTimestamp(new Date(created_at) ?? new Date(now)) // post publish date
                     .setFooter({ text: author_name ?? 'Unnamed Author', iconURL: author_icon }); //post author? should that be under setAuthor?
                 if (arrImages.length > 0) {
                      /* if (arrImages.length > 1) {
@@ -84,8 +97,8 @@ module.exports = {
                         });
                     } else  */commandsEmbed.setImage(arrImages.join("\n")) //cant embed videos  (video ?? )
                 }
-
-                msg.reply({ embeds: [commandsEmbed] }); //await waitMsg.edit
+                msg.delete();
+                msg.channel.send({ embeds: [commandsEmbed] }); //await waitMsg.edit
                 if (is_video) {
                     arrVideos.forEach(video_url => {
                         msg.channel.send(`[720p Video](${video_url})`); //-------------------------grab thumbnail for videos without images, so the embed doesn't look weird

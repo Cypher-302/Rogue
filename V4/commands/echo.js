@@ -5,7 +5,6 @@ module.exports = {
         var { isAuth } = require("../index.js");
         userAuth = isAuth(msg);
         try{
-            if (msg.author.id == '918970233962758164' || !userAuth)  { return; }
             let args = msg.content.split(" ");
             args.shift();
             let msgReply = args.join(" ");; 
