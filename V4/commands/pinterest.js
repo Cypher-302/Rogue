@@ -77,19 +77,18 @@ module.exports = {
                     .setTimestamp(new Date(created_at)) // post publish date
                     .setFooter({ text: author_name ?? 'Unnamed Author', iconURL: author_icon }); //post author? should that be under setAuthor?
                 if (arrImages.length > 0) {
-                    /* if (arrImages.length > 1) {
+                     /* if (arrImages.length > 1) {
                         commandsEmbed.setImage(shift(arrImages));
                         arrImages.forEach(image_url => {
                             msg.channel.send(image_url);
                         });
-                    } */
-                    commandsEmbed.setImage(arrImages.join("\n")) //cant embed videos  (video ?? )
+                    } else  */commandsEmbed.setImage(arrImages.join("\n")) //cant embed videos  (video ?? )
                 }
 
                 msg.reply({ embeds: [commandsEmbed] }); //await waitMsg.edit
                 if (is_video) {
                     arrVideos.forEach(video_url => {
-                        msg.channel.send(`[720p Video](${video_url})`);
+                        msg.channel.send(`[720p Video](${video_url})`); //-------------------------grab thumbnail for videos without images, so the embed doesn't look weird
                     });
                 }
                 console.log("[PINTEREST] Completed");
