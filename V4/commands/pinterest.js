@@ -15,48 +15,82 @@ module.exports = {
             (async () => {
 
                 let id = await getPinterestId(inputUrl)
-                console.log(`Pinterest Id: ${id}`)
+                
 
                 let data = await getPinResource(id)
 
-                var { title, link, dominant_color, story_pin_data, images } = data
-                var storyImages = story_pin_data?.pages?.map?.(e => e.blocks[0].image.images.originals.url) || [images.orig.url] || []
+                var { title, link, dominant_color, story_pin_data, images, created_at } = data // renaming- images: arrImages
+                var arrVideos = [];
+                var arrImages = [];
+                //console.log(story_pin_data.pages, story_pin_data.pages[0])
+                if (story_pin_data) {
+                    for (const block of story_pin_data.pages[0].blocks) {
+                        if (block.video) {
+                            arrVideos.push(Object.values(block?.video?.video_list)[0]?.url)
+                        } else if (block.image) {
+                            arrImages.push(block?.image?.images?.originals?.url)
+                        }
+                        //console.log(block)
+                    }
+                }
+                //console.log('appear!')
+                console.log(arrVideos, arrImages)
+
+                //var storyImages = story_pin_data?.pages?.map?.(e => e.blocks[0]?.image?.images?.originals?.url) || [images.orig.url] || []
                 var web_link = link;
 
+                var author_name = data.native_creator?.full_name;
+                var author_icon = data.native_creator?.image_medium_url;
+                //console.log(story_pin_data?.pages?.map?.(e => e.blocks))
+                if (images.orig.url) {
+                    arrImages.push(images.orig.url)
+                }
                 var is_video = false
-                var video = data.videos?.video_list.V_720P.url; // could use nullish coalescance (X ?? Y) here to combine video and storyImages into media,
-                if (video != null) {                            //  implement when doing / commands
+
+                var video = data.videos?.video_list.V_720P.url;
+                if (video) {
+                    arrVideos.push(video);
+                }
+                console.log(arrVideos.length, arrImages.length)
+
+                if (arrVideos.length > 0) {
                     is_video = true
                 }
-
-                /* console.log(`Title: ${title}`)
-                console.log(`Website Link: ${web_link}`)
-                console.log(`Dominant Color: ${dominant_color}`)
-                console.log(`Is Video: ${is_video}`)
-                console.log(`Video: ${video}`)
-                console.log(`Images: ${storyImages.join("\n")}`) */
+                
 
                 const commandsEmbed = new EmbedBuilder()
-                .setColor(dominant_color || 0x0099FF)
-                .setTitle(title || 'Pinterest')
-                .setURL(web_link)
-                //.setAuthor({ name: 'Some name', iconURL: 'https://i.imgur.com/AfFp7pu.png', url: 'https://discord.js.org' })
-                //.setDescription('Some description here')
-                //.setThumbnail('https://i.imgur.com/AfFp7pu.png') // use image if video present
-                /* .addFields(
-                    
-                    { name: 'Regular field title', value: 'Some value here' },
-                    { name: '\u200B', value: '\u200B' },
-                    { name: 'Inline field title', value: 'Some value here', inline: true },
-                    { name: 'Inline field title', value: 'Some value here', inline: true },
-                )*/
-                //.addFields({ name: 'Inline field title', value: video }) 
-                .setImage(storyImages.join("\n") ) //cant embed videos  (video ?? )
-                //.setTimestamp() // post publish date
-                //.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' }); //post author? should that be under setAuthor?
+                    .setColor(dominant_color || 0x0099FF)
+                    .setTitle(title || 'Pinterest')
+                    .setURL(web_link)
+                    .setAuthor({ name: msg.author.username, iconURL: msg.author.displayAvatarURL() }) //, url: 'https://discord.js.org' 
+                    //.setDescription('Some description here')
+                    //.setThumbnail('https://i.imgur.com/AfFp7pu.png') // use image if video present
+                    /* .addFields(
+                        
+                        { name: 'Regular field title', value: 'Some value here' },
+                        { name: '\u200B', value: '\u200B' },
+                        { name: 'Inline field title', value: 'Some value here', inline: true },
+                        { name: 'Inline field title', value: 'Some value here', inline: true },
+                    )*/
+                    //.addFields({ name: 'Inline field title', value: video }) 
+
+                    .setTimestamp(new Date(created_at)) // post publish date
+                    .setFooter({ text: author_name ?? 'Unnamed Author', iconURL: author_icon }); //post author? should that be under setAuthor?
+                if (arrImages.length > 0) {
+                    /* if (arrImages.length > 1) {
+                        commandsEmbed.setImage(shift(arrImages));
+                        arrImages.forEach(image_url => {
+                            msg.channel.send(image_url);
+                        });
+                    } */
+                    commandsEmbed.setImage(arrImages.join("\n")) //cant embed videos  (video ?? )
+                }
+
                 msg.reply({ embeds: [commandsEmbed] }); //await waitMsg.edit
                 if (is_video) {
-                    msg.channel.send(`[720p Video](${video})`);
+                    arrVideos.forEach(video_url => {
+                        msg.channel.send(`[720p Video](${video_url})`);
+                    });
                 }
                 console.log("[PINTEREST] Completed");
             })()
