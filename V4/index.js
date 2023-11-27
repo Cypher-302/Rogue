@@ -2,10 +2,6 @@ const path = require("node:path");
 const fs = require('node:fs');
 const { Client, Collection, Events, GatewayIntentBits, messageLink } = require('discord.js');
 const { token } = require("../config.json");
-//const { maxHeaderSize } = require("node:http");
-//const { builtinModules } = require("node:module");
-const cheerio = require('cheerio');
-const axios = require('axios');
 
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
@@ -17,19 +13,6 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('
 for (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
     const command = require(filePath);
-
-    // Pass cheerio and axios as dependencies to the "pinterest" command module
-    switch (command.name) {
-        case 'pinterest':
-            //command.cheerio = cheerio;
-            command.axios = axios;
-            break;
-        case 'images':
-            //command.Scraper = Scraper; //none of this works, class type gets stripped when importing
-            //command.google = google;
-            //command.EmbedBuilder = EmbedBuilder;
-            break;
-    }
 
     client.commands.set(command.name, command);
 }
@@ -43,7 +26,10 @@ client.once(Events.ClientReady, () => {
 
 client.on(Events.MessageCreate, msgHandler);
 
-async function msgHandler(msg) { //switch case statement better than many if statements ↑↓
+async function msgHandler(msg) {
+    if (msg.author.bot) {
+        return
+    }
     var msgCommand;
 
 

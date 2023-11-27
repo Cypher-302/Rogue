@@ -3,9 +3,10 @@ module.exports = {
     description: "Provides a help message listing bot commands and functions",
     execute(msg) {
         try{ 
-            if (msg.author.id == '918970233962758164')  { return; }
+
             const { client } = require("../index.js");
             const { EmbedBuilder } = require('discord.js');
+
             //console.log(client.commands);
             //console.log(client.commands[1].name);
             //client.commands.get(msgCommand)
