@@ -92,12 +92,12 @@ module.exports = {
                     pinterestEmbed.addFields({ name: 'Website link', value: `[Guide](${web_link})`, inline: true })
                 }
                 if (arrImages.length > 0) {
-                      /* if (arrImages.length > 1) {
+                      if (arrImages.length > 1) {
                         pinterestEmbed.setImage(arrImages.shift());
                         msg.channel.send(arrImages.join(' '));
-                    } else  */pinterestEmbed.setImage(arrImages[0]) //cant embed videos  (video ?? )
+                    } else pinterestEmbed.setImage(arrImages[0]) //cant embed videos  (video ?? )
                 }
-                //msg.delete();
+                msg.delete();
                 msg.channel.send({ embeds: [pinterestEmbed] }); //await waitMsg.edit
                 if (is_video) {
                     arrVideos.forEach(video_url => {
