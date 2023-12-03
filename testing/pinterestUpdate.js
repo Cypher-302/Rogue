@@ -1,5 +1,6 @@
 const axios = require("axios");
-const inputUrl = 'https://za.pinterest.com/pin/79587118407452809/feedback/?invite_code=b0ee5c427a8049b7b6fe715f4c97d536&sender_id=819444232107397335';//  https://pin.it/ynRsVwa     https://pin.it/5JAAi0h          https://pin.it/3iGEvyP
+const inputUrl = 'https://pin.it/1t6NJmf';
+//https://za.pinterest.com/pin/79587118407452809/feedback/?invite_code=b0ee5c427a8049b7b6fe715f4c97d536&sender_id=819444232107397335  https://pin.it/ynRsVwa     https://pin.it/5JAAi0h          https://pin.it/3iGEvyP
 
 
 
