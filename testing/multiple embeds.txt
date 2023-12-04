@@ -1,0 +1,7 @@
+const embeds = [
+    new EmbedBuilder().setURL("https://example.org/").setImage("https://picsum.photos/500/500")
+        .setTitle("title").setDescription("desc").setFooter({ text: "footer" }),
+    new EmbedBuilder().setURL("https://example.org/").setImage("https://picsum.photos/500/400"),
+    new EmbedBuilder().setURL("https://example.org/").setImage("https://picsum.photos/400/500"),
+    new EmbedBuilder().setURL("https://example.org/").setImage("https://picsum.photos/400/400"),
+];

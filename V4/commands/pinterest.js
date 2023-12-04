@@ -2,16 +2,19 @@ const axios = require('axios');
 const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
-    name: "pinterest",
-    description: "Provides an embedded image of an pinterest link. Triggers automatically.",
+    name: 'pinterest',
+    description: 'Provides an embedded image of an pinterest link. Triggers automatically.',
     execute(msg) {
         try {
             console.log(`[PINTEREST]: {${msg.author.username}}`);
-            //var waitMsg = msg.reply('Processing...'); not work
+
 
             var inputUrl = msg.content.match(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/)[0];
 
             (async () => {
+                let waitEmbed = new EmbedBuilder().setTitle('Processing...');
+                var waitMsg = await msg.reply({ embeds: [waitEmbed] });
+
                 let startTime = Date.now();
 
                 let id = await getPinterestId(inputUrl)
@@ -41,9 +44,8 @@ module.exports = {
                 //console.log(story_pin_data?.pages?.map?.(e => e.blocks))
 
                 if (images.orig.url) {
-                    arrImages.push(images.orig.url)
+                    arrImages.push(images.orig.url);
                 }
-                var is_video = false
 
                 var video = data.videos?.video_list.V_720P.url;
                 if (video) {
@@ -55,54 +57,31 @@ module.exports = {
 
                 console.log(`--Video${vidSuffix}: ${arrVideos.length}, Image${imgSuffix}: ${arrImages.length}`)
 
+                var is_video = false;
+
                 if (arrVideos.length > 0) {
-                    is_video = true
+                    is_video = true;
                 }
 
-                var currentdate = new Date();
-                var formattedDate = '';
-                switch (msg.createdAt.getDate()) {
-                    case currentdate.getDate():
-                        formattedDate = 'Today at ';
-                        break;
-                    case (currentdate.getDate() - 1):
-                        formattedDate = 'Yesterday at ';
-                        break;
-                    default:
-                        formattedDate = currentdate.toDateString() + ' at ';
-                }
-
-                var outputDate = formattedDate + msg.createdAt.toTimeString();
+                let msgDate = messageDateFormatter();
 
                 const pinterestEmbed = new EmbedBuilder()
                     .setColor(dominant_color || 0x0099FF)
                     .setTitle(title || 'Pinterest')
                     .setURL(inputUrl)
                     .setAuthor({ name: msg.author.username, iconURL: msg.author.displayAvatarURL() }) //, url: 'https://discord.js.org' 
-                    .setDescription(outputDate.replace(/(:[0-9]+ GMT\+[0-9]+ )+/, ' '))
-                    /*.setThumbnail('https://i.imgur.com/AfFp7pu.png') // use image if video present
-                    .addFields({ name: '\u200B', value: '\u200B' })
-                    )*/
+                    .setDescription(msgDate)
+                    //.addFields({ name: '\u200B', value: '\u200B' }) --blank line
                     .setTimestamp(new Date(created_at) ?? new Date(now)) // post publish date
                     .setFooter({ text: author_name ?? 'Unnamed Author', iconURL: author_icon });
                 if (web_link) {
-                    let web_name = await axios.get(web_link).catch(function (error) {
-                        if (error.response) {
-                            // The request was made and the server responded with a status code
-                            // that falls out of the range of 2xx
-                            console.log(error.response.data);
-                            console.log(error.response.status);
-                            console.log(error.response.headers);
-                        } else if (error.request) {
-                            // The request was made but no response was received
-                            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-                            // http.ClientRequest in node.js
-                            console.log(error.request);
-                        } else {
-                            // Something happened in setting up the request that triggered an Error
-                            console.log('Error', error.message);
+                    let web_name = await axios.get(web_link, {
+                        signal: AbortSignal.timeout(15000), // Aborts request after 15 seconds
+                        validateStatus: function (status) {
+                            return status != 404; // Resolve only if the HTTP status code is not 404
                         }
-                        console.log(error.config);
+                    }).catch(function (error) {
+                        console.log(error.toJSON());
                     });
                     pinterestEmbed.addFields({ name: 'Website link', value: `[${web_name?.request?.socket?._host || 'Link'}](${web_link})`, inline: true })
                 }
@@ -110,38 +89,67 @@ module.exports = {
                       /* if (arrImages.length > 1) {
                         pinterestEmbed.setImage(arrImages.shift());
                         msg.channel.send(arrImages.join(' '));
-                    } else  */pinterestEmbed.setImage(arrImages[0]) //cant embed videos  (video ?? )
+                    } else  */pinterestEmbed.setImage(arrImages[0]); //cant embed videos  (video ?? )
+                } else if (images['60x60'].url) {
+                    pinterestEmbed.setThumbnail(images['60x60'].url);
                 }
 
                 //msg.delete(); --this is fine when the bot is always online, current version (sometimes on, sometimes off) makes this a bit detrimental to user xp
 
-                msg.reply({ embeds: [pinterestEmbed] }); //await waitMsg.edit  --msg.channel.send
+                waitMsg.edit({ embeds: [pinterestEmbed] }); //--msg.channel.send
+
                 if (is_video) {
                     arrVideos.forEach(video_url => {
                         msg.channel.send(`[720p Video](${video_url})`); //-------------------------grab thumbnail for videos without images, so the embed doesn't look weird
                     });
                 }
-                console.log("[PINTEREST] Completed");
+
+                console.log('[PINTEREST] Completed');
 
                 let endTime = Date.now();
                 let timeDiff = (endTime - startTime) / 1000;
                 console.log(`${timeDiff.toFixed(2)}s`);
             })()
 
+
             async function getPinterestId(url) {
-                const req = await axios.get(url)
-                var url = new URL(req.request.res.responseUrl)
-                var id = url.pathname.split("/")[2]
+                const req = await axios.get(url, {
+                    signal: AbortSignal.timeout(15000), // Aborts request after 15 seconds
+                }).catch(function (error) {
+                    console.log(error.toJSON()); //still keeps running and will error later, figure out way to stop here if timeout
+                });
+                var url = new URL(req.request.res.responseUrl);
+                var id = url.pathname.split('/')[2];
                 return id
             }
 
             async function getPinResource(id) {
                 let data = (await axios.get('https://za.pinterest.com/resource/PinResource/get/', {
                     params: {
-                        'data': JSON.stringify({ "options": { "id": id, "field_set_key": "auth_web_main_pin", "noCache": true, "fetch_visual_search_objects": true }, "context": {} })
+                        'data': JSON.stringify({ 'options': { 'id': id, 'field_set_key': 'auth_web_main_pin', 'noCache': true, 'fetch_visual_search_objects': true }, 'context': {} })
                     }
                 })).data.resource_response.data
                 return data
+            }
+
+            function messageDateFormatter() {
+                let currentDate = new Date();
+                let currentDayOfMonth = currentDate.getDate();
+                let msgDate = msg.createdAt.getDate();
+
+                switch (msgDate) {
+                    case currentDayOfMonth:
+                        var formattedDate = 'Today at ';
+                        break;
+                    case (currentDayOfMonth - 1):
+                        var formattedDate = 'Yesterday at ';
+                        break;
+                    default:
+                        var formattedDate = currentDate.toDateString() + ' at '; //
+                }
+
+                let outputDate = formattedDate + msg.createdAt.toTimeString();
+                return outputDate.replace(/(:[0-9]+ GMT\+[0-9]+ )+/, ' '); // the regex gets rid of the seconds & extra GMT info from outputted string
             }
 
         } catch (error) {
