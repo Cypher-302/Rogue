@@ -55,7 +55,7 @@ module.exports = {
                 let vidSuffix = (arrVideos.length > 1) ? 's' : '';
                 let imgSuffix = (arrImages.length > 1) ? 's' : '';
 
-                console.log(`--Video${vidSuffix}: ${arrVideos.length}, Image${imgSuffix}: ${arrImages.length}`)
+                //console.log(`--Video${vidSuffix}: ${arrVideos.length}, Image${imgSuffix}: ${arrImages.length}`)
 
                 var is_video = false;
 
@@ -83,7 +83,7 @@ module.exports = {
                     }).catch(function (error) {
                         console.log(error.toJSON());
                     });
-                    pinterestEmbed.addFields({ name: 'Website link', value: `[${web_name?.request?.socket?._host || 'Link'}](${web_link})`, inline: true })
+                    pinterestEmbed.addFields({ name: 'Website of origin:', value: `[${web_name?.request?.socket?._host || 'Link'}](${web_link})`, inline: true })
                 }
                 if (arrImages.length > 0) {
                       /* if (arrImages.length > 1) {
@@ -104,11 +104,11 @@ module.exports = {
                     });
                 }
 
-                console.log('[PINTEREST] Completed');
+                //console.log('[PINTEREST] Completed');
 
                 let endTime = Date.now();
                 let timeDiff = (endTime - startTime) / 1000;
-                console.log(`${timeDiff.toFixed(2)}s`);
+                console.log(`[PINTEREST] Completed (${timeDiff.toFixed(2)}s)`);
             })()
 
 
