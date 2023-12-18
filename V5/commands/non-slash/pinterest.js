@@ -7,24 +7,23 @@ module.exports = {
     execute(msg) {
         try {
             console.log(`[PINTEREST]: {${msg.author.username}}`);
-
-
-            var inputUrl = msg.content.match(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/)[0];
+            
+            let regexURL = new RegExp('https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/', 'g');
+            let inputUrl = msg.content.match(regexURL)[0];
 
             (async () => {
                 let waitEmbed = new EmbedBuilder().setTitle('Processing...');
-                var waitMsg = await msg.reply({ embeds: [waitEmbed] });
+                let waitMsg = await msg.reply({ embeds: [waitEmbed] });
 
                 let startTime = Date.now();
 
-                let id = await getPinterestId(inputUrl)
-                let data = await getPinResource(id)
+                let id = await getPinterestId(inputUrl);
+                let data = await getPinResource(id);
 
-                var { title, link: web_link, dominant_color, story_pin_data, images, created_at } = data;
-                var author_name = data.native_creator?.full_name;
-                var author_icon = data.native_creator?.image_medium_url;
-                var arrVideos = [];
-                var arrImages = [];
+                let { title, link: web_link, dominant_color, story_pin_data, images, created_at } = data;
+                let author_name = data.native_creator?.full_name;
+                let author_icon = data.native_creator?.image_medium_url;
+                let arrVideos = [], arrImages = [];
                 /* story_pin_data.pages.forEach(element => {
                     console.log(element);
                 }); */
@@ -47,7 +46,7 @@ module.exports = {
                     arrImages.push(images.orig.url);
                 }
 
-                var video = data.videos?.video_list.V_720P.url;
+                let video = data.videos?.video_list.V_720P.url;
                 if (video) {
                     arrVideos.push(video);
                 }
@@ -57,7 +56,7 @@ module.exports = {
 
                 //console.log(`--Video${vidSuffix}: ${arrVideos.length}, Image${imgSuffix}: ${arrImages.length}`)
 
-                var is_video = false;
+                let is_video = false;
 
                 if (arrVideos.length > 0) {
                     is_video = true;
@@ -74,6 +73,7 @@ module.exports = {
                     //.addFields({ name: '\u200B', value: '\u200B' }) --blank line
                     .setTimestamp(new Date(created_at) ?? new Date(now)) // post publish date
                     .setFooter({ text: author_name ?? 'Unnamed Author', iconURL: author_icon });
+
                 if (web_link) {
                     let web_name = await axios.get(web_link, {
                         signal: AbortSignal.timeout(15000), // Aborts request after 15 seconds
@@ -128,8 +128,8 @@ module.exports = {
                     params: {
                         'data': JSON.stringify({ 'options': { 'id': id, 'field_set_key': 'auth_web_main_pin', 'noCache': true, 'fetch_visual_search_objects': true }, 'context': {} })
                     }
-                })).data.resource_response.data
-                return data
+                })).data.resource_response.data;
+                return data;
             }
 
             function messageDateFormatter() {
@@ -145,12 +145,12 @@ module.exports = {
                         var formattedDate = 'Yesterday at ';
                         break;
                     default:
-                        var formattedDate = currentDate.toDateString() + ' at '; //
+                        var formattedDate = currentDate.toDateString() + ' at '; // eg: Mon Dec 18 2023 at
                 }
-
-                let outputDate = formattedDate + msg.createdAt.toTimeString();
-                return outputDate.replace(/(:[0-9]+ GMT\+[0-9]+ )+/, ' '); // the regex gets rid of the seconds & extra GMT info from outputted string
-            }
+                console.log(formattedDate)
+                let outputDate = formattedDate + msg.createdAt.toTimeString(); // eg: Mon Dec 18 2023 at 00:02 +02:00 (South Africa Standard Time)
+                return outputDate.replace(/(:[0-9]+ GMT\+[0-9]+ )+/, ' ');     // the regex gets rid of the seconds & extra GMT info from outputted string
+            }                                                                  //--there are no longer seconds & extra GMT info, should change this
 
         } catch (error) {
             console.error(error);

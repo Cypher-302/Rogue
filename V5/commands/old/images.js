@@ -27,7 +27,7 @@ module.exports = {
 
         await interaction.deferReply({ ephemeral: true });
         try {
-            const userInput = interaction.options.get('search').text;
+            const userInput = interaction.options.get('search').value;
             const amount = interaction.options.get('amount')?.value ?? 1;
 
             console.log(`[IMAGE] {${interaction.user.username}} (${amount}) : ${userInput}`)

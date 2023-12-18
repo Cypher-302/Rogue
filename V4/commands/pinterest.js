@@ -145,9 +145,9 @@ module.exports = {
                         var formattedDate = 'Yesterday at ';
                         break;
                     default:
-                        var formattedDate = currentDate.toDateString() + ' at '; //
+                        var formattedDate = currentDate.toDateString() + ' at '; // eg: Mon Dec 18 2023 at
                 }
-
+                console.log(msg.createdAt.toTimeString())
                 let outputDate = formattedDate + msg.createdAt.toTimeString();
                 return outputDate.replace(/(:[0-9]+ GMT\+[0-9]+ )+/, ' '); // the regex gets rid of the seconds & extra GMT info from outputted string
             }

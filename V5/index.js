@@ -22,10 +22,23 @@ for (const folder of commandFolders) {
 		if ('data' in command && 'execute' in command) {
 			client.commands.set(command.data.name, command);
 		} else {
-			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+            if (!filePath.includes('non-slash')) {
+			    console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+            }
 		}
 	}
 
+}
+
+client.nonSlashCommands = new Collection();
+const nonSlashCommandsPath = path.join(__dirname, 'commands/non-slash');
+const nonSlashCommandsFiles = fs.readdirSync(nonSlashCommandsPath).filter(file => file.endsWith('.js'));
+
+for (const file of nonSlashCommandsFiles) {
+    const filePath = path.join(nonSlashCommandsPath, file);
+    const nonSlashCommand = require(filePath);
+
+    client.nonSlashCommands.set(nonSlashCommand.name, nonSlashCommand);
 }
 
 client.once(Events.ClientReady, () => {
@@ -68,24 +81,17 @@ async function msgHandler(msg) {
         return
     }
     var msgCommand;
-
+    console.log('message detected');
 
     if (msg.content.includes('https://pin.it/') || msg.content.includes('pinterest.com/pin/')) {
         msgCommand = "pinterest";
     } else if (msg.content.includes('instagram.com/reel/')) {
-        //---
+        //msgCommand = 'instagram'
     } else if (msg.content.includes('tiktok.com/')) {
         //msgCommand = 'tiktok'; result.url
     }
 
-    if (msg.content.startsWith('!img')) {
-        msgCommand = 'img';
-    } else if (msg.content.startsWith('!')) {
-        msgCommand = msg.content.split(' ').shift();
-        msgCommand = msgCommand.substring(1);
-    }
-
-    const command = client.commands.get(msgCommand);
+    const command = client.nonSlashCommands.get(msgCommand);
 
     if (!command) return;
 
