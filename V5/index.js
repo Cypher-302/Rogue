@@ -86,6 +86,8 @@ async function msgHandler(msg) {
         //msgCommand = 'instagram'
     } else if (msg.content.includes('tiktok.com/')) {
         //msgCommand = 'tiktok'; result.url
+    } else if (msg.content.startsWith('!refreshFrom')) {
+        msgCommand = 'refreshFrom';
     }
 
     const command = client.nonSlashCommands.get(msgCommand);

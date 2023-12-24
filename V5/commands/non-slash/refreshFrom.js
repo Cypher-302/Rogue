@@ -3,7 +3,7 @@ module.exports = {
     description: "[Limited to past 100 messages] Dynamically grabs the amt of msgs from the msg replied -> current msg and refreshes them",
      async execute(msg) {
 
-        var { msgHandler } = require("../index.js");
+        var { msgHandler } = require("../../index.js");
         temp = await msg.fetchReference();
         repliedMessageId = temp.id;
 
