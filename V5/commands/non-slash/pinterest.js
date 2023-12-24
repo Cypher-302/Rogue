@@ -8,7 +8,7 @@ module.exports = {
         try {
             console.log(`[PINTEREST]: {${msg.author.username}}`);
             
-            let regexURL = new RegExp('https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/', 'g');
+            let regexURL = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
             let inputUrl = msg.content.match(regexURL)[0];
 
             (async () => {
@@ -147,7 +147,6 @@ module.exports = {
                     default:
                         var formattedDate = currentDate.toDateString() + ' at '; // eg: Mon Dec 18 2023 at
                 }
-                console.log(formattedDate)
                 let outputDate = formattedDate + msg.createdAt.toTimeString(); // eg: Mon Dec 18 2023 at 00:02 +02:00 (South Africa Standard Time)
                 return outputDate.replace(/(:[0-9]+ GMT\+[0-9]+ )+/, ' ');     // the regex gets rid of the seconds & extra GMT info from outputted string
             }                                                                  //--there are no longer seconds & extra GMT info, should change this

@@ -1,6 +1,6 @@
-module.exports = { //cant reply to messages with slash commands, thus this is a non-slash command
+module.exports = {
     name: "refreshFrom",
-    description: "[Only past 100 messages] Refreshes all messages from the message you replied to -> current message",
+    description: "[Limited to past 100 messages] Dynamically grabs the amt of msgs from the msg replied -> current msg and refreshes them",
      async execute(msg) {
 
         var { msgHandler } = require("../index.js");

@@ -7,7 +7,7 @@ module.exports = {
     async execute(interaction) {
         try{
             var { msgHandler } = require("../../index.js");
-            interaction = await interaction.fetchReference();
+            interaction = await interaction.fetchReply();
             console.log(`[REFRESH] - (REPLY): {${msg.author.username}}`);
             msgHandler(msg);
 

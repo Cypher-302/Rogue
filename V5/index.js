@@ -4,10 +4,9 @@ const { Client, Collection, Events, GatewayIntentBits, messageLink } = require('
 const { token } = require('../config.json');
 
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] }); //, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] }); //, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent
 
 client.commands = new Collection();
-
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
 
@@ -27,7 +26,6 @@ for (const folder of commandFolders) {
             }
 		}
 	}
-
 }
 
 client.nonSlashCommands = new Collection();
@@ -42,7 +40,7 @@ for (const file of nonSlashCommandsFiles) {
 }
 
 client.once(Events.ClientReady, () => {
-    console.log("Ready!");
+    console.log('Ready!');
     //client.channels.cache.find(channel => channel.id === '950067867808858114').send(`Bot is online! [RUNNING ON: Cypher's PC]`) //random-stuff
 });
 
@@ -51,7 +49,7 @@ client.on(Events.InteractionCreate, interactionHandler);
 
 async function interactionHandler(interaction) {
     if (!interaction.isChatInputCommand()) return;
-    //console.log(interaction);
+    console.log(interaction);
 
     const command = interaction.client.commands.get(interaction.commandName);
 
@@ -81,10 +79,9 @@ async function msgHandler(msg) {
         return
     }
     var msgCommand;
-    console.log('message detected');
 
     if (msg.content.includes('https://pin.it/') || msg.content.includes('pinterest.com/pin/')) {
-        msgCommand = "pinterest";
+        msgCommand = 'pinterest';
     } else if (msg.content.includes('instagram.com/reel/')) {
         //msgCommand = 'instagram'
     } else if (msg.content.includes('tiktok.com/')) {
