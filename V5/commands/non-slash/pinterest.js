@@ -57,8 +57,8 @@ module.exports = {
                     arrVideos.push(video);
                 }
 
-                let vidSuffix = (arrVideos.length > 1) ? 's' : '';
-                let imgSuffix = (arrImages.length > 1) ? 's' : '';
+                let vidSuffix = (arrVideos.length > 1) ? 's' : ''; // adds a 's' suffix if there are more than 1 videos
+                let imgSuffix = (arrImages.length > 1) ? 's' : ''; // adds a 's' suffix if there are more than 1 images
 
                 //console.log(`--Video${vidSuffix}: ${arrVideos.length}, Image${imgSuffix}: ${arrImages.length}`)
 
