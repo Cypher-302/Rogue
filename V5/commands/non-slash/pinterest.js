@@ -27,20 +27,26 @@ module.exports = {
                 /* story_pin_data.pages.forEach(element => {
                     console.log(element);
                 }); */
+                var arrPageVideoLinks = [];
 
                 if (story_pin_data) {
                     story_pin_data.pages.forEach(page => {
                         for (const block of page.blocks) {
                             if (block.video) {
-                                arrVideos.push(Object.values(block?.video?.video_list)[0]?.url)
+                                arrPageVideoLinks = Object.values(block?.video?.video_list);
+                                for (let i = 0; i < arrPageVideoLinks.length; i++) {
+                                    if (arrPageVideoLinks[i]?.url.includes('.mp4')) {
+                                        arrVideos.push(arrPageVideoLinks[i].url);
+                                        return;    
+                                    }
+                                }
+
                             } else if (block.image) {
                                 arrImages.push(block?.image?.images?.originals?.url)
                             }
                         };
                     });
                 };
-
-                //console.log(story_pin_data?.pages?.map?.(e => e.blocks))
 
                 if (images.orig.url) {
                     arrImages.push(images.orig.url);

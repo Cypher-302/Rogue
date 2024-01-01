@@ -35,17 +35,12 @@ module.exports = {
                         for (const block of page.blocks) {
                             if (block.video) {
                                 arrPageVideoLinks = Object.values(block?.video?.video_list);
-                                
-                                for (let i = 0; i < arrPageVideoLinks; i++) {
+                                for (let i = 0; i < arrPageVideoLinks.length; i++) {
                                     if (arrPageVideoLinks[i]?.url.includes('.mp4')) {
-                                        console.log(arrPageVideoLinks[i])
                                         arrVideos.push(arrPageVideoLinks[i].url);
                                         return;    
-                                    } else console.log(arrPageVideoLinks[i])
+                                    }
                                 }
-                                console.log(arrPageVideoLinks[1].url.includes('.mp4'))
-                                
-                                //arrVideos.push(Object.values(block?.video?.video_list)[0]?.url)
 
                             } else if (block.image) {
                                 arrImages.push(block?.image?.images?.originals?.url)
@@ -55,7 +50,6 @@ module.exports = {
                 };
 
                 //console.log(story_pin_data?.pages?.map?.(e => e.blocks))
-                //console.log(arrVideos)
 
                 if (images.orig.url) {
                     arrImages.push(images.orig.url);
